@@ -1,9 +1,5 @@
-import java.util.ArrayList;
-import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.SortedMap;
+import java.util.*;
+import java.io.*;
 
 public class MainPlaylist {
     private ArrayList<Song> masterList = new ArrayList<>(); // all songs
@@ -23,8 +19,47 @@ public class MainPlaylist {
         genreMap.computeIfAbsent(song.getGenre(), genreList -> new ArrayList<>()).add(song);
         yearMap.computeIfAbsent(song.getReleaseYear(), yearList -> new ArrayList<>()).add(song);
     }
+
     public void loadFromFile(String filename){
-        
+        BufferedReader filereader = null;
+        try{
+            filereader = new BufferedReader(new FileReader(filename));
+            String line;
+            //reads first line to discard header
+            filereader.readLine();
+            //While loop used for reading every line in csv and make it a song object by adding values at the commas.
+            //addSong method to store it.
+            int lineNumber = 1;
+            while((line = filereader.readLine()) != null){
+                String noSpaces = line.replaceAll("\\s+", "");
+                String[] row = noSpaces.split(",");
+                try {
+                    if((row[4] == null) || (row[5] == null) || (row[22] == null) ){
+                        filereader.readLine();
+                        continue;
+                    }
+                    Song song = new Song(row[0], row[3], row[10], row[4], Integer.parseInt(row[4]), Integer.parseInt(row[5]), Integer.parseInt(row[22]));
+                    addSong(song);
+                } catch (NumberFormatException e) {
+                    System.out.println("There was an invalid number value on line" + lineNumber);
+                    continue;
+                }
+                lineNumber++;
+            }
+
+        } catch(Exception e){
+            System.out.println("File does not exist");
+            e.printStackTrace();
+
+        } finally{
+            try{
+                if(filereader != null) {
+                    filereader.close();
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     /**
      * @return Returns the master list for sorting
@@ -58,6 +93,11 @@ public class MainPlaylist {
         }
         return genreMap.get(genre);
     }
+     private String assignMood(double bpm) {
+        if (bpm < 90) return "Chill";
+        else if (bpm <= 120) return "Happy";
+        else return "Energetic";
+        }
     /**
      * @return Returns list songs from that year
      */
@@ -67,5 +107,18 @@ public class MainPlaylist {
             //returns message saying this artist is not in the playlist
         }
         return yearMap.get(year);
+        
     }
+    public static void main(String[] args) {
+    MainPlaylist playlist = new MainPlaylist();
+    playlist.loadFromFile("songs.csv");
+
+    List<Song> sortedByArtist =
+            Sorter.sortByArtist(playlist.getAllSongs());
+
+    System.out.println("Sorted by Artist:");
+    for (Song s : sortedByArtist) {
+        System.out.println(s);
+    }
+}
 }
