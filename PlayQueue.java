@@ -3,10 +3,14 @@ import java.util.*;
 
 public class PlayQueue {
 
-    private Deque<Song> queue;
+    private Deque<Song> queue = new ArrayDeque<>();
+    private Deque<Song> historyStack = new ArrayDeque<>();
+    boolean currSong = false;
 
-    public PlayQueue() {
-        queue = new LinkedList<>();
+    public void buildQueue(ArrayList<Song> songlist){
+        queue.clear();
+        historyStack.clear();
+
     }
 
     // Add song to end of queue

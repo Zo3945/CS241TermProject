@@ -22,9 +22,9 @@ public class MainPlaylist {
         yearMap.computeIfAbsent(song.getReleaseYear(), yearList -> new ArrayList<>()).add(song);
     }
 
-    public void loadFromFile(String filename){
+    public void loadFromFile (String filename){
         CSVReader filereader = null;
-        try{
+        try {
             filereader = new CSVReader(new FileReader(filename));
             String[] line;
             //reads first line to discard header
@@ -32,13 +32,22 @@ public class MainPlaylist {
             //While loop used for reading every line in csv and make it a song object by adding values at the commas.
             //addSong method to store it.
             int lineNumber = 2;
-            while((line = filereader.readNext()) != null){
+            while ((line = filereader.readNext()) != null){
                 try {
                     if((line[4].isEmpty()) || (line[5].isEmpty()) || (line[22].isEmpty()) ){
                         lineNumber++;
                         continue;
                     }
-                    Song song = new Song(line[0], line[3], line[10], line[4], Integer.parseInt(line[4]), Integer.parseInt(line[5]), Integer.parseInt(line[22]));
+                    //parse date to get year:
+                    String raw = line[4];
+                    String digits = raw.replaceAll("\\D", ""); // keep only digits
+                    if (digits.length() < 4) {
+                        throw new NumberFormatException("Invalid year");
+                    }
+                    int year = Integer.parseInt(digits.substring(0, 4));
+
+                    //                Track Name, Artist(s),Released,Year,      Duration,             Genre,           BPM.
+                    Song song = new Song(line[1], line[3], line[4], year, Integer.parseInt(line[5]), line[10], Double.parseDouble(line[22]));
                     addSong(song);
                 } catch (NumberFormatException e) {
                     lineNumber++;
@@ -48,12 +57,12 @@ public class MainPlaylist {
                 lineNumber++;
             }
 
-        } catch(IOException | CsvException e){
+        } catch (IOException | CsvException e){
             System.out.println("File does not exist");
             e.printStackTrace();
 
-        } finally{
-            try{
+        } finally {
+            try {
                 if(filereader != null) {
                     filereader.close();
                 }
@@ -108,18 +117,5 @@ public class MainPlaylist {
             //returns message saying this artist is not in the playlist
         }
         return yearMap.get(year);
-        
     }
-    public static void main(String[] args) {
-    MainPlaylist playlist = new MainPlaylist();
-    playlist.loadFromFile("songs.csv");
-
-    List<Song> sortedByArtist =
-            Sorter.sortByArtist(playlist.getAllSongs());
-
-    System.out.println("Sorted by Artist:");
-    for (Song s : sortedByArtist) {
-        System.out.println(s);
-    }
-}
 }
