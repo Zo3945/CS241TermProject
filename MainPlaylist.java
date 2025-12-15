@@ -1,5 +1,7 @@
 import java.util.*;
 import java.io.*;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
 public class MainPlaylist {
     private ArrayList<Song> masterList = new ArrayList<>(); // all songs
@@ -21,33 +23,32 @@ public class MainPlaylist {
     }
 
     public void loadFromFile(String filename){
-        BufferedReader filereader = null;
+        CSVReader filereader = null;
         try{
-            filereader = new BufferedReader(new FileReader(filename));
-            String line;
+            filereader = new CSVReader(new FileReader(filename));
+            String[] line;
             //reads first line to discard header
-            filereader.readLine();
+            filereader.readNext();
             //While loop used for reading every line in csv and make it a song object by adding values at the commas.
             //addSong method to store it.
-            int lineNumber = 1;
-            while((line = filereader.readLine()) != null){
-                String noSpaces = line.replaceAll("\\s+", "");
-                String[] row = noSpaces.split(",");
+            int lineNumber = 2;
+            while((line = filereader.readNext()) != null){
                 try {
-                    if((row[4] == null) || (row[5] == null) || (row[22] == null) ){
-                        filereader.readLine();
+                    if((line[4].isEmpty()) || (line[5].isEmpty()) || (line[22].isEmpty()) ){
+                        lineNumber++;
                         continue;
                     }
-                    Song song = new Song(row[0], row[3], row[10], row[4], Integer.parseInt(row[4]), Integer.parseInt(row[5]), Integer.parseInt(row[22]));
+                    Song song = new Song(line[0], line[3], line[10], line[4], Integer.parseInt(line[4]), Integer.parseInt(line[5]), Integer.parseInt(line[22]));
                     addSong(song);
                 } catch (NumberFormatException e) {
-                    System.out.println("There was an invalid number value on line" + lineNumber);
+                    lineNumber++;
+                    System.out.println("Invalid numeric value @line " + lineNumber);
                     continue;
                 }
                 lineNumber++;
             }
 
-        } catch(Exception e){
+        } catch(IOException | CsvException e){
             System.out.println("File does not exist");
             e.printStackTrace();
 
