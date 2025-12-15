@@ -5,9 +5,9 @@ public class Song {
     private String releaseDate;
     private int releaseYear;
     private int duration;
-    private int bpm;
+    private double bpm;
 
-    public Song(String songTitle, String artist, String genre, String releaseDate, int releaseYear, int duration, int bpm){
+    public Song(String songTitle, String artist, String genre, String releaseDate, int releaseYear, int duration, double bpm){
         this.songTitle = songTitle;
         this.artist = artist;
         this.genre = genre;
@@ -34,7 +34,7 @@ public class Song {
     public int getDuration(){
         return this.duration;
     }
-    public int getBPM(){
+    public double getBPM(){
         return this.bpm;
     }
     public String toString(){
