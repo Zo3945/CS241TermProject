@@ -1,5 +1,16 @@
 import java.util.*;
 
+import org.junit.runner.manipulation.Sorter;
+/**
+ * public void printQueue() {
+        if (queue.isEmpty()) {
+            System.out.println("Queue is empty.");
+        } else {
+            System.out.println("Current Queue:");
+            queue.forEach(System.out::println);
+        }
+    }
+ */
 public class App {
 
     public static void main(String[] args) {
