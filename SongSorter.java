@@ -49,9 +49,7 @@ public class SongSorter {
         }
         return sorted;
     }
-    
-    
-    public static ArrayList<Song> sortByYearAscending(ArrayList<Song> songs, boolean direction) {
+    public static ArrayList<Song> sortByYear(ArrayList<Song> songs, boolean direction) {
         ArrayList<Song> sorted = new ArrayList<>(songs);
 
         Collections.sort(sorted, (a, b) -> {
@@ -66,8 +64,6 @@ public class SongSorter {
         }
         return sorted;
     }
-   
-    
     public static ArrayList<Song> shuffle(ArrayList<Song> songs) {
         ArrayList<Song> shuffled = new ArrayList<>(songs);
         Collections.shuffle(shuffled);

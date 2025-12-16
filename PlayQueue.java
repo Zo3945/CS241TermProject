@@ -66,4 +66,12 @@ public class PlayQueue {
         queue.clear();
         historyStack.clear();
     }
+    public void printQueue() {
+        if (queue.isEmpty()) {
+            System.out.println("Queue is empty.");
+        } else {
+            System.out.println("Current Queue:");
+            queue.forEach(System.out::println);
+        }
+    }
 }

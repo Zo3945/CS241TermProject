@@ -2,6 +2,7 @@ import java.util.*;
 import java.io.*;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 
 public class MainPlaylist {
     private ArrayList<Song> masterList = new ArrayList<>(); // all songs
@@ -34,7 +35,11 @@ public class MainPlaylist {
             int lineNumber = 2;
             while ((line = filereader.readNext()) != null){
                 try {
-                    if((line[4].isEmpty()) || (line[5].isEmpty()) || (line[22].isEmpty()) ){
+                    if(line.length <= 22){
+                        lineNumber++;
+                        continue;
+                    }
+                    if( (line[1].isEmpty()) || (line[3].isEmpty()) || (line[4].isEmpty()) || (line[5].isEmpty()) || (line[10].isEmpty()) || (line[22].isEmpty()) ){
                         lineNumber++;
                         continue;
                     }
@@ -57,9 +62,9 @@ public class MainPlaylist {
                 lineNumber++;
             }
 
-        } catch (IOException | CsvException e){
-            System.out.println("File does not exist");
-            e.printStackTrace();
+        } catch (IOException | CsvValidationException e){
+            System.out.println("Error reading CSV file.");
+            e.getMessage();
 
         } finally {
             try {
@@ -88,7 +93,8 @@ public class MainPlaylist {
      */
     public ArrayList<Song> searchByArtist(String artist){
         if(artist == null || !artistMap.containsKey(artist)){
-            return null;
+            ArrayList<Song> emptyList = new ArrayList<>();
+            return emptyList;
             //returns message saying this artist is not in the playlist
         }
         return artistMap.get(artist);
@@ -98,7 +104,8 @@ public class MainPlaylist {
      */
     public ArrayList<Song> searchByGenre(String genre){
         if(genre == null || !genreMap.containsKey(genre)){
-            return null;
+            ArrayList<Song> emptyList = new ArrayList<>();
+            return emptyList;
             //returns message saying this genre is not in the playlist
         }
         return genreMap.get(genre);
@@ -113,7 +120,8 @@ public class MainPlaylist {
      */
     public ArrayList<Song> searchByYear(Integer year){
         if(year == null || !yearMap.containsKey(year)){
-            return null;
+            ArrayList<Song> emptyList = new ArrayList<>();
+            return emptyList;
             //returns message saying this artist is not in the playlist
         }
         return yearMap.get(year);
