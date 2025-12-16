@@ -23,8 +23,10 @@ public class MainPlaylist {
         yearMap.computeIfAbsent(song.getReleaseYear(), yearList -> new ArrayList<>()).add(song);
     }
 
-    public void loadFromFile (String filename){
+    public int loadFromFile (String filename){
         CSVReader filereader = null;
+        int linesRead = 2;
+        int loadedCount = 0;
         try {
             filereader = new CSVReader(new FileReader(filename));
             String[] line;
@@ -32,15 +34,12 @@ public class MainPlaylist {
             filereader.readNext();
             //While loop used for reading every line in csv and make it a song object by adding values at the commas.
             //addSong method to store it.
-            int lineNumber = 2;
             while ((line = filereader.readNext()) != null){
                 try {
                     if(line.length <= 22){
-                        lineNumber++;
                         continue;
                     }
                     if( (line[1].isEmpty()) || (line[3].isEmpty()) || (line[4].isEmpty()) || (line[5].isEmpty()) || (line[10].isEmpty()) || (line[22].isEmpty()) ){
-                        lineNumber++;
                         continue;
                     }
                     //parse date to get year:
@@ -54,17 +53,17 @@ public class MainPlaylist {
                     //                Track Name, Artist(s),Released,Year,      Duration,             Genre,           BPM.
                     Song song = new Song(line[1], line[3], line[4], year, Integer.parseInt(line[5]), line[10], Double.parseDouble(line[22]));
                     addSong(song);
+                    loadedCount++;
                 } catch (NumberFormatException e) {
-                    lineNumber++;
-                    System.out.println("Invalid numeric value @line " + lineNumber);
+                 linesRead++;
+                    System.out.println("Invalid numeric value @line " + linesRead);
                     continue;
                 }
-                lineNumber++;
+             linesRead++;
             }
-
         } catch (IOException | CsvValidationException e){
             System.out.println("Error reading CSV file.");
-            e.getMessage();
+            e.printStackTrace();
 
         } finally {
             try {
@@ -75,6 +74,7 @@ public class MainPlaylist {
                 e.printStackTrace();
             }
         }
+        return loadedCount;
     }
     /**
      * @return Returns the master list for sorting

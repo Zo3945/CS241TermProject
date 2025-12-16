@@ -5,6 +5,7 @@ public class App {
         App app = new App();
         app.run();
     }
+
     MainPlaylist playlist = new MainPlaylist();
     PlayQueue playQueue = new PlayQueue();
     Scanner scanner = new Scanner(System.in);
@@ -20,13 +21,20 @@ public class App {
 
         while (running) {
             showMenu(); //displays the Menu
-            if (!scanner.hasNextInt()) {
-            System.out.println("Please enter 1 or 2.");
-            scanner.nextLine(); // discard bad input
-            return;
-            }
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+            
+            int choice;
+                while(true){
+                    String input = scanner.nextLine();
+                    try{
+                        choice = Integer.parseInt(input);
+                        if(choice < 1 || choice > 9){
+                            System.out.println("Please enter a valid number.\n");
+                            continue;
+                        } break;
+                    } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.\n");
+                    }
+                }
 
             //each case calls a helper method
             switch (choice) {
@@ -68,39 +76,64 @@ public class App {
 
     private void handlePlayNext() {
     Song next = playQueue.playNext();
+
     if (next != null) {
-        System.out.println("Now playing: " + next);
+        System.out.println("\n==Now Playing==  " + next);
+
+    } else if (playQueue.isEmpty()) {
+        System.out.println("Build the play queue first by sorting the playlist.");
+
     } else {
-         System.out.println("Build the play queue first by sorting the playlist.");
-        }
+        System.out.println("No song in da queue.");
     }
+}
+
     private void handlePlayPrevious() {
-    Song prev = playQueue.playPrevious();
-    if (prev != null) {
-        System.out.println("Now playing: " + prev);
-    } else {
-         System.out.println("Build the play queue first by sorting the playlist.");
+        Song prev = playQueue.playPrevious();
+        if (prev != null) {
+            System.out.println("\n==Now Playing== " + prev);
+        } else if (playQueue.isEmpty()){
+            System.out.println("Build the play queue first by sorting the playlist.");
+        } else {
+            System.out.println("Playlist has no previous song yet.");
         }
     }
     
     private void handleLoadSongs(){
         System.out.println("1. Load from file");
         System.out.println("2. Enter songs manually \n(BPM and Duration(ms) are required!)");
-        System.out.print("Choose an option: ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice;
+        System.out.print("\nEnter your choice:--> ");
+        while(true){
+            String input = scanner.nextLine();
+            try{
+                choice = Integer.parseInt(input);
+                if(choice < 1 || choice > 2){
+                    System.out.println("Please enter a valid number.\n");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.");
+            }
+        }
         if (choice == 1){
             System.out.println("Enter the file path: ");
             String filepath = scanner.nextLine();
-            playlist.loadFromFile(filepath);
 
-        } else if (choice == 2) {
+            int count = playlist.loadFromFile(filepath);
+            if (count > 0) {
+                System.out.println("Successfully loaded " + count + " songs into playlist!");
+            } else {
+                System.out.println("File loaded, but no valid songs were found.");
+            }
+
+        } else if(choice == 2) {
             System.out.print("Enter a number of songs you wish to add: ");
             int count = scanner.nextInt();
             scanner.nextLine();
 
-            for (int i = 0; i < count; i++) {
+            for(int i = 0; i < count; i++) {
                 System.out.print("Title: ");
                 String title = scanner.nextLine();
 
@@ -110,26 +143,59 @@ public class App {
                 System.out.print("Release Date (YYYY-DD-MM): ");
                 String releaseDate = scanner.nextLine();
 
-                System.out.print("Year: ");
-                int year = scanner.nextInt();
-                scanner.nextLine();
-
-                System.out.print("Duration: ");
-                int duration = scanner.nextInt();
-                scanner.nextLine();
+                int year;
+                while(true){
+                    System.out.print("Year: ");
+                    String input = scanner.nextLine();
+                    try{
+                        year = Integer.parseInt(input);
+                        if(year < 1000 || year > 3000){
+                            System.out.println("Please enter a valid number from 1000-3000.\n");
+                            continue;
+                        } break;
+                    } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.\n");
+                    }
+                }
                 
+                int duration;
+                while(true){
+                    System.out.print("Duration (ms): ");
+                    String input = scanner.nextLine();
+                    try{
+                        duration = Integer.parseInt(input);
+                        if(duration <= 0){
+                            System.out.println("Please enter a positive duration time.\n ");
+                            continue;
+                        } break;
+                    } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.\n");
+                    }
+                }
+            
                 System.out.print("Genre: ");
                 String genre = scanner.nextLine();
 
-                System.out.print("BPM: ");
-                double bpm = scanner.nextDouble();
-                scanner.nextLine();
-                
-
+                double bpm;
+                while(true){
+                    System.out.print("BPM: ");
+                    String input = scanner.nextLine();
+                    try{
+                        bpm = Double.parseDouble(input);
+                        if(bpm < 0){
+                            System.out.println("Please enter a non negative number!\n");
+                            continue;
+                        } break;
+                    } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.\n");
+                    }
+                }
                 Song song = new Song(title, artist, releaseDate, year, duration, genre, bpm);
                 playlist.addSong(song);
             }
-
+        }
+        else{
+            System.out.println("Invalid option. Please enter 1 or 2.");
         }
     }
 
@@ -143,20 +209,53 @@ public class App {
         System.out.print("Release Date (YYYY-DD-MM): ");
         String releaseDate = scanner.nextLine();
 
-        System.out.print("Year: ");
-        int year = scanner.nextInt();
-        scanner.nextLine();
+        int year;
+        while(true){
+            System.out.print("Year: ");
+            String input = scanner.nextLine();
+            try{
+                year = Integer.parseInt(input);
+                if(year < 1000 || year > 3000){
+                    System.out.println("Please enter a valid number from 1000-3000.\n");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                System.out.println("Please enter a valid number.");
+            }
+        }
 
-        System.out.print("Duraton: ");
-        int duration = scanner.nextInt();
-        scanner.nextLine();
+        int duration;
+        while(true){
+            System.out.print("Duration (ms): ");
+            String input = scanner.nextLine();
+            try{
+                duration = Integer.parseInt(input);
+                if(duration <= 0){
+                    System.out.println("Please enter a positive duration time.\n ");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                System.out.println("Please enter a valid number.");
+            }
+        }
             
         System.out.print("Genre: ");
         String genre = scanner.nextLine();
 
-        System.out.print("BPM: ");
-        double bpm = scanner.nextDouble();
-        scanner.nextLine();
+        double bpm;
+        while(true){
+            System.out.print("BPM: ");
+            String input = scanner.nextLine();
+            try{
+                bpm = Double.parseDouble(input);
+                if(bpm < 0){
+                    System.out.println("Please enter a non negative number! ");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                System.out.println("Please enter a valid number.");
+            }
+        }
                 
         Song song = new Song(title, artist, releaseDate, year, duration, genre, bpm);
         playlist.addSong(song);
@@ -169,8 +268,20 @@ public class App {
         System.out.println("3. Genre");
         System.out.println("4. Year");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice;
+        System.out.print("\nEnter your choice --> ");
+        while(true){
+            String input = scanner.nextLine();
+            try{
+                choice = Integer.parseInt(input);
+                if(choice < 1 || choice > 4){
+                    System.out.println("Please enter a valid number.\n");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.");
+            }
+        }
 
         if (choice == 1) {
             System.out.print("Enter title: ");
@@ -204,16 +315,41 @@ public class App {
         System.out.println("4. Year");
         System.out.println("5. Shuffle");
 
-        int sortChoice = scanner.nextInt();
-        scanner.nextLine();
+        int sortChoice;
+        System.out.print("\nEnter your choice --> ");
+        while(true){
+            String input = scanner.nextLine();
+            try{
+                sortChoice = Integer.parseInt(input);
+                if(sortChoice < 1 || sortChoice > 5){
+                    System.out.println("Please enter a valid number.\n");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                        System.out.println("Please enter a valid number.");
+            }
+        }
         boolean direction = true;
 
         if (sortChoice != 5) {
         System.out.println("Direction:");
         System.out.println("1. Normal");
         System.out.println("2. Reversed");
-        int dirChoice = scanner.nextInt();
-        scanner.nextLine();
+
+        int dirChoice;
+        System.out.print("\nEnter your choice --> ");
+        while(true){
+            String input = scanner.nextLine();
+            try{
+                dirChoice = Integer.parseInt(input);
+                if(dirChoice < 1 || dirChoice > 2){
+                    System.out.println("Please enter a valid number.\n");
+                    continue;
+                } break;
+            } catch(NumberFormatException e){
+                System.out.println("Please enter a valid number.");
+            }
+        }
         direction = (dirChoice == 1);
     }
 
@@ -242,7 +378,7 @@ public class App {
         }
 
         playQueue.buildFromList(sorted);
-        System.out.println("Play queue rebuilt.");
+        System.out.println("Play queue is now rebuilt.");
     }
     private void showMenu() {
         System.out.println("\n=== Music App Menu ===\n");
@@ -255,10 +391,6 @@ public class App {
         System.out.println("7. Print current queue");
         System.out.println("8. Clear queue");
         System.out.println("9. Exit");
-        System.out.print("Enter your choice: ");
+        System.out.print("Enter your choice: --> ");
     }
 }
-
-    
-
-    
