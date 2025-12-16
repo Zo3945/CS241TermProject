@@ -1,7 +1,6 @@
-
 import static org.junit.Assert.*;
-import java.io.*;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PlayQueueTest {
 
@@ -10,31 +9,34 @@ public class PlayQueueTest {
     private Song song2;
     private Song song3;
 
-
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         playQueue = new PlayQueue();
 
-        song1 = new Song("Song A", "Artist A", "Pop", "2020", 2020, 180, 120);
-        song2 = new Song("Song B", "Artist B", "Rock", "2021", 2021, 200, 130);
-        song3 = new Song("Song C", "Artist C", "Jazz", "2019", 2019, 210, 90);
+        // Match your Song constructor:
+        // Song(String title, String artist, String releaseDate,
+        //      int year, int duration, String genre, double bpm)
+
+        song1 = new Song("Song A", "Artist A", "2020-01-01", 2020, 180, "Pop", 120);
+        song2 = new Song("Song B", "Artist B", "2021-01-01", 2021, 200, "Rock", 130);
+        song3 = new Song("Song C", "Artist C", "2019-01-01", 2019, 210, "Jazz", 90);
     }
 
     @Test
-    void testQueueStartsEmpty() {
-        assertTrue(playQueue.isEmpty(), "Queue should start empty");
+    public void testQueueStartsEmpty() {
+        assertTrue(playQueue.isEmpty());
     }
 
     @Test
-    void testAddSong() {
+    public void testAddSong() {
         playQueue.addSong(song1);
 
-        assertFalse(playQueue.isEmpty(), "Queue should not be empty after adding a song");
-        assertEquals(song1, playQueue.peekNext(), "Peek should return the first song added");
+        assertFalse(playQueue.isEmpty());
+        assertEquals(song1, playQueue.peekNext());
     }
 
     @Test
-    void testFIFOOrder() {
+    public void testFIFOOrder() {
         playQueue.addSong(song1);
         playQueue.addSong(song2);
         playQueue.addSong(song3);
@@ -42,22 +44,22 @@ public class PlayQueueTest {
         assertEquals(song1, playQueue.playNext());
         assertEquals(song2, playQueue.playNext());
         assertEquals(song3, playQueue.playNext());
-        assertTrue(playQueue.isEmpty(), "Queue should be empty after playing all songs");
+        assertTrue(playQueue.isEmpty());
     }
 
     @Test
-    void testPeekDoesNotRemoveSong() {
+    public void testPeekDoesNotRemoveSong() {
         playQueue.addSong(song1);
         playQueue.addSong(song2);
 
         Song peeked = playQueue.peekNext();
 
-        assertEquals(song1, peeked, "Peek should return first song");
-        assertFalse(playQueue.isEmpty(), "Peek should not remove the song");
+        assertEquals(song1, peeked);
+        assertFalse(playQueue.isEmpty());
     }
 
     @Test
-    void testPlayNextOnEmptyQueue() {
-        assertNull(playQueue.playNext(), "Playing from empty queue should return null");
+    public void testPlayNextOnEmptyQueue() {
+        assertNull(playQueue.playNext());
     }
 }
