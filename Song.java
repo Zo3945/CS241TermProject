@@ -7,13 +7,13 @@ public class Song {
     private int duration;
     private double bpm;
 
-    public Song(String songTitle, String artist, String genre, String releaseDate, int releaseYear, int duration, double bpm){
+    public Song(String songTitle, String artist, String releaseDate, int releaseYear, int duration, String genre, double bpm){
         this.songTitle = songTitle;
         this.artist = artist;
-        this.genre = genre;
         this.releaseDate = releaseDate;
         this.releaseYear = releaseYear;
         this.duration = duration;
+        this.genre = genre;
         this.bpm = bpm;
     }
     public String getTitle(){
@@ -21,9 +21,6 @@ public class Song {
     }
     public String getArtist(){
         return this.artist;
-    }
-    public String getGenre(){
-        return this.genre;
     }
     public String getReleaseDate(){
         return this.releaseDate;
@@ -34,10 +31,13 @@ public class Song {
     public int getDuration(){
         return this.duration;
     }
+    public String getGenre(){
+        return this.genre;
+    }
     public double getBPM(){
         return this.bpm;
     }
     public String toString(){
-        return "Song Title: "+ this.songTitle + ", Artist: "+ this.artist+", Genre: "+this.genre+", Released: "+this.releaseDate+", Duaration: "+this.duration;
+        return "Song Title: "+ this.songTitle + ", Artist: "+ this.artist+", Genre: "+this.genre+", Released: "+this.releaseDate+", Duaration: "+this.duration+ "ms";
     }
 }
