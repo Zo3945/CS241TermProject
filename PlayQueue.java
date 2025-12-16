@@ -16,7 +16,7 @@ public class PlayQueue {
 
     // Add song to end of queue
     public void addSong(Song song) {
-        queue.addFirst(song);
+        queue.addLast(song);
     }
 
     // Playing the next song fifo
