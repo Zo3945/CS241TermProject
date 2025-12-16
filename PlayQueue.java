@@ -39,7 +39,7 @@ public class PlayQueue {
         //Pop the last played song from history
         Song prev = historyStack.pop();
         if (prev != null) {
-            //Add it to the front of the queue, but do NOT push back to history
+            
             queue.addFirst(prev);
         }
         return prev;
